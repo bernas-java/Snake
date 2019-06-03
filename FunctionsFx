@@ -1,0 +1,144 @@
+package Main;
+
+import javax.swing.*;
+import java.util.Random;
+
+import static Main.GUI.*;
+
+public class FunctionsFx {
+
+    public static void snakeMove(char way) {
+        int pos1 = GUI.pos1;
+        int pos2 = GUI.pos2;
+        int[][] board = GUI.board;
+        snakeLocationsX.add(pos1);
+        snakeLocationsY.add(pos2);
+
+
+        if (way == 'E') {
+            try {
+                board[pos1 + 1][pos2] = board[pos1][pos2];
+                GUI.pos1++;
+            } catch (Exception e) {
+                board[0][pos2] = board[pos1][pos2];
+                GUI.pos1 = 0;
+            } finally {
+                board[pos1][pos2] = 0;
+            }
+        }
+        if (way == 'W') {
+            try {
+                board[pos1 - 1][pos2] = board[pos1][pos2];
+                GUI.pos1--;
+            } catch (Exception e) {
+                board[16][pos2] = board[pos1][pos2];
+                GUI.pos1 = 16;
+            }
+            finally {
+                board[pos1][pos2] = 0;
+            }
+        }
+        if (way == 'N') {
+            try {
+                board[pos1][pos2 - 1] = board[pos1][pos2];
+                GUI.pos2--;
+            } catch (Exception e) {
+                board[pos1][14] = board[pos1][pos2];
+                GUI.pos2 = 14;
+            } finally {
+                board[pos1][pos2] = 0;
+            }
+        }
+        if (way == 'S') {
+            try {
+                board[pos1][pos2 + 1] = board[pos1][pos2];
+                GUI.pos2++;
+            } catch (Exception e) {
+                board[pos1][0] = board[pos1][pos2];
+                GUI.pos2 = 0;
+            }
+            finally {
+                board[pos1][pos2] = 0;
+            }
+        }
+        if (GUI.score > 0) {
+            followingObject();
+        }
+    }
+
+    public static void newFood() {
+        Random random = new Random();
+
+        while (true) {
+            int pos1 = random.nextInt(17);
+            int pos2 = random.nextInt(15);
+            if (board[pos1][pos2] == 0) {
+                board[pos1][pos2] = 2;
+                break;
+            }
+        }
+    }
+
+    public static void isFood() {
+        boolean food = false;
+        check:
+        for (int i = 0; i < 17; i++) {
+            for (int z = 0; z < 15; z++) {
+                if (board[i][z] == 2) {
+                    food = true;
+                    break check;
+                }
+            }
+        }
+        if (!food) {
+            newSnakePart();
+            GUI.score++;
+            newFood();
+        }
+    }
+
+    private static void newSnakePart() {
+        board[snakeLocationsX.get(snakeLocationsX.size() - score)][snakeLocationsY.get(snakeLocationsY.size() - score)] = 1;
+    }
+
+    private static void followingObject() {
+        int x = 1;
+        try {
+            while (x < score) {
+                board[snakeLocationsX.get(snakeLocationsX.size() - x)][snakeLocationsY.get(snakeLocationsY.size() - x)] = board[snakeLocationsX.get(snakeLocationsX.size() - x - 1)][snakeLocationsY.get(snakeLocationsY.size() - x - 1)];
+                board[snakeLocationsX.get(snakeLocationsX.size() - x - 1)][snakeLocationsY.get(snakeLocationsY.size() - x - 1)] = 0;
+                x++;
+            }
+        } catch (Exception e) {
+            System.out.println("???");
+        }
+    }
+
+    public static void ifLose() {
+        int muchOne = 0;
+        for (int i = 0; i < 17; i++) {
+            for (int z = 0; z < 15; z++) {
+                if (board[i][z] == 1) {
+                    muchOne++;
+                }
+            }
+        }
+        if (muchOne < score) {
+            shutdown = true;
+            String message = "";
+            if (score == 1) {
+                message = "Zdobyłeś 1 punkt.";
+            } else if (score > 1 && score < 5) {
+                message = "Zdobyłeś "+score+" punkty.";
+            } else if (score == 0 || score > 4){
+                message = "Zdobyłeś "+score+" punktów.";
+            }
+            int input = JOptionPane.showOptionDialog(null, message, "GAME OVER", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+            if(input == JOptionPane.OK_OPTION)
+            {
+                System.exit(0);
+            }
+        }
+    }
+
+}
