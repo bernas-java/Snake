@@ -1,0 +1,107 @@
+package Main;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+
+public class GUI extends JFrame {
+
+
+    // modern
+    private Color Bcolor = new Color(0,204,0);
+    private Color Bcolor2 = new Color(0,255,0);
+    private Color Ecolor = new Color(255,0,0);
+    private Color Scolor = new Color(0,0,255);
+
+
+    //retro
+    private Color Bcolor = new Color(0,0,0);
+    private Color Bcolor2 = new Color(0,0,0);
+    private Color Ecolor = new Color(0,255,0);
+    private Color Scolor = new Color(0,255,0);
+
+    public static int pos1 = 0;
+    public static int pos2 = 0;
+    public static char way = 'E';
+    public static int score = 1;
+    public static boolean shutdown = false;
+    public static int speed = 100;
+
+    public static ArrayList<Integer> snakeLocationsX = new ArrayList<>();
+    public static ArrayList<Integer> snakeLocationsY = new ArrayList<>();
+
+    public static int[][] board = { {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    };
+
+    GUI() {
+
+        setSize(652,626);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setTitle("Snake");
+        setVisible(true);
+        FunctionsFx.newFood();
+
+        Key key = new Key();
+        this.addKeyListener(key);
+    }
+
+    public void paint(Graphics g) {
+        FunctionsFx.snakeMove(way);
+        FunctionsFx.isFood();
+        FunctionsFx.ifLose();
+        for(int i = 0; i < 17; i++) {
+            for (int z = 0; z < 15; z++) {
+                /////  BACKGROUND  /////
+                if (i%2 != 0) {
+                    if (z%2 != 0) {
+                        g.setColor(Bcolor);
+                    } else {
+                        g.setColor(Bcolor2);
+                    }
+                } else {
+                    if (z%2 != 0) {
+                        g.setColor(Bcolor2);
+                    } else {
+                        g.setColor(Bcolor);
+                    }
+                }
+                g.fillRect(i*38+3,z*40+26,38,40);
+                /////              /////
+
+                /////  EAT  /////
+                if (board[i][z] == 2) {
+                    g.setColor(Ecolor);
+                    g.fillOval(i*38+3+9,z*40+26+10,20,20);
+                }
+                /////       /////
+                /////  SNAKE  /////
+
+                if (board[i][z] == 1) {
+                    g.setColor(Scolor);
+                    g.fillRect(i*38+3,z*40+26,38,40);
+                }
+            }
+        }
+
+    }
+
+
+
+}
